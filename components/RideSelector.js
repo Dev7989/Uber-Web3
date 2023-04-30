@@ -19,7 +19,7 @@ const style = {
 
 const RideSelector = () => {
   const [carList, setCarList] = useState([])
-  const { selectedRide, setSelectedRide, setPrice, basePrice } =
+  const { selectedRide, setSelectedRide, setPrice, basePrice, pickup, setPickup, dropoff, setDropoff } =
     useContext(UberContext)
 
   console.log(basePrice)
@@ -71,6 +71,11 @@ const RideSelector = () => {
                 {((basePrice / 10 ** 5) * car.priceMultiplier).toFixed(5)}
               </div>
               <Image src={ethLogo} height={25} width={40} alt='ethLogo' />
+            </div>
+            <div className={style.priceContainer}>
+              <div className={style.price}>
+                {((dropoff ))  }  km
+              </div>
             </div>
           </div>
         ))}

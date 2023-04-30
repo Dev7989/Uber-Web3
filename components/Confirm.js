@@ -1,17 +1,14 @@
-import RideSelector from './RideSelector'
-import { useContext } from 'react'
-import { UberContext } from '../context/uberContext'
-import { ethers } from 'ethers'
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import RideSelector from "./RideSelector";
+import { useContext } from "react";
+import { UberContext } from "../context/uberContext";
+import { ethers } from "ethers";
 
 const style = {
   wrapper: `flex-1 h-full flex flex-col justify-between`,
   rideSelectorContainer: `h-full flex flex-col overflow-auto scrollbar-hide mb-20`,
   confirmButtonContainer: ` cursor-pointer z-20 absolute bottom-[5px] bg-white left-0 right-0`,
   confirmButton: `bg-black text-white m-4 py-4 text-center text-xl`,
-}
+};
 
 const Confirm = () => {
   const {
@@ -23,14 +20,14 @@ const Confirm = () => {
     pickupCoordinates,
     dropoffCoordinates,
     metamask,
-  } = useContext(UberContext)
+  } = useContext(UberContext);
 
   const storeTripDetails = async (pickup, dropoff) => {
     try {
-      await fetch('/api/db/saveTrips', {
-        method: 'POST',
+      await fetch("/api/db/saveTrips", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           pickupLocation: pickup,
@@ -39,28 +36,28 @@ const Confirm = () => {
           price: price,
           selectedRide: selectedRide,
         }),
-      })
+      });
 
-      await metamask.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            from: currentAccount,
-            to: process.env.NEXT_PUBLIC_UBER_ADDRESS,
-            gas: '0x7EF40', // 520000 Gwei
-            value: ethers.utils.parseEther(price)._hex,
-          },
-        ],
-      })
+      await metamask
+        .request({
+          method: "eth_sendTransaction",
+          params: [
+            {
+              from: currentAccount,
+              to: process.env.NEXT_PUBLIC_UBER_ADDRESS,
+              gas: "0x7EF40", // 520000 Gwei
+              value: ethers.utils.parseEther(price)._hex,
+            },
+          ],
+        })
+        .on("confirmation", (confirmationNumber, receipt) => {
+          // Add an alert to indicate that the transaction has been confirmed
+          alert("Transaction confirmed!");
+        });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-
-    toast.success('Order successfully placed!', {
-      position: toast.POSITION.TOP_CENTER,
-      autoClose: 4000, // Milliseconds until the notification is automatically closed
-    });
-  }
+  };
 
   return (
     <div className={style.wrapper}>
@@ -71,14 +68,16 @@ const Confirm = () => {
         <div className={style.confirmButtonContainer}>
           <div
             className={style.confirmButton}
-            onClick={() => storeTripDetails(pickup, dropoff)}
+            onClick={() => {
+              storeTripDetails(pickup, dropoff);
+            }}
           >
-            Confirm {selectedRide.service || 'UberX'}
+            Confirm {selectedRide.service || "UberX"}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Confirm
+export default Confirm;
