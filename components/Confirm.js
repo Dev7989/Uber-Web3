@@ -2,6 +2,9 @@ import RideSelector from './RideSelector'
 import { useContext } from 'react'
 import { UberContext } from '../context/uberContext'
 import { ethers } from 'ethers'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const style = {
   wrapper: `flex-1 h-full flex flex-col justify-between`,
@@ -52,6 +55,11 @@ const Confirm = () => {
     } catch (error) {
       console.error(error)
     }
+
+    toast.success('Order successfully placed!', {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 4000, // Milliseconds until the notification is automatically closed
+    });
   }
 
   return (
