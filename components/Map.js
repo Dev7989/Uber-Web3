@@ -1,7 +1,11 @@
 import { useEffect, useContext } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { UberContext } from '../context/uberContext'
-import * as turf from '@turf/turf'
+import MapboxDirections from '@mapbox/mapbox-sdk/services/directions';
+
+const directionsService = MapboxDirections({
+  accessToken: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+});
 
 const style = {
   wrapper: `flex-1 h-full w-full absolute bottom-0`,
@@ -29,13 +33,6 @@ const Map = () => {
     }
 
     if (pickupCoordinates && dropoffCoordinates) {
-      const distance = turf.distance(
-        turf.point(pickupCoordinates),
-        turf.point(dropoffCoordinates)
-      )
-
-      console.log('Distance:', distance)
-      
       map.fitBounds([dropoffCoordinates, pickupCoordinates], {
         padding: 400,
       })
