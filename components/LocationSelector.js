@@ -18,6 +18,8 @@ const style = {
   input: `my-2 rounded-2 p-2 outline-none border-none bg-transparent  h-full w-full`,
   verticalLine: `w-0 h-[2rem] border-black border absolute z-10 left-[2.3rem] top-[2rem]`,
   suggestion: `absolute top-24 left-0 right-0 bg-white z-10 border border-gray-300 rounded-b-lg overflow-auto max-h-60 scrollbar-hide `,
+  suggestion2: `absolute top-24 left-0 right-0 bg-white z-10 border border-gray-300 rounded-b-lg overflow-auto max-h-60 scrollbar-hide `,
+
 };
 
 const LocationSelector = () => {
@@ -25,8 +27,10 @@ const LocationSelector = () => {
   const { pickup, setPickup, dropoff, setDropoff } = useContext(UberContext);
 
   const [suggestions, setSuggestions] = useState([]);
+  const [suggestions2, setSuggestions2] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
 
   const onInputChange = async (input) => {
     setLoading(true);
@@ -48,9 +52,34 @@ const LocationSelector = () => {
     setLoading(false);
   };
 
+  const onInputChange2 = async (input) => {
+    setLoading2(true);
+
+    try {
+      const response = await geocodingClient
+        .forwardGeocode({
+          query: input,
+          types: ["address"]
+        })
+        .send();
+
+      const features = response.body.features;
+      setSuggestions2(features);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoading2(false);
+  };
+
   function handleSuggestionClick(feature) {
     setPickup(feature.place_name);
     setSuggestions([]);
+  }
+
+  function handleSuggestion2Click(feature) {
+    setDropoff(feature.place_name);
+    setSuggestions2([]);
   }
   
 
@@ -119,18 +148,18 @@ const LocationSelector = () => {
             value={dropoff}
             onChange={(e) => {
               setDropoff(e.target.value);
-              onInputChange(e.target.value);
+              onInputChange2(e.target.value);
             }}
             onFocus={() => setInFocus("to")}
           />
 
           {loading && <p>Loading suggestions...</p>}
-          {suggestions.length > 0 && inFocus === "to" && (
-            <ul className={style.suggestion}>
-              {suggestions.map((feature) => (
+          {suggestions2.length > 0 && inFocus === "to" && (
+            <ul className={style.suggestion2}>
+              {suggestions2.map((feature) => (
                 <li
                   key={feature.id}
-                  onClick={() => handleSuggestionClick(feature)}
+                  onClick={() => handleSuggestion2Click(feature)}
                 >
                   {feature.place_name}
                 </li>

@@ -1,5 +1,5 @@
 import RideSelector from "./RideSelector";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UberContext } from "../context/uberContext";
 import { ethers } from "ethers";
 
@@ -8,6 +8,8 @@ const style = {
   rideSelectorContainer: `h-full flex flex-col overflow-auto scrollbar-hide mb-20`,
   confirmButtonContainer: ` cursor-pointer z-20 absolute bottom-[5px] bg-white left-0 right-0`,
   confirmButton: `bg-black text-white m-4 py-4 text-center text-xl`,
+  popupContainer: `fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50`,
+  popup: `bg-white p-8 text-xl text-center`,
 };
 
 const Confirm = () => {
@@ -21,6 +23,8 @@ const Confirm = () => {
     dropoffCoordinates,
     metamask,
   } = useContext(UberContext);
+
+  const [transactionStatus, setTransactionStatus] = useState(null);
 
   const storeTripDetails = async (pickup, dropoff) => {
     try {
@@ -38,7 +42,7 @@ const Confirm = () => {
         }),
       });
 
-      await metamask
+      const transaction = await metamask
         .request({
           method: "eth_sendTransaction",
           params: [
@@ -50,10 +54,8 @@ const Confirm = () => {
             },
           ],
         })
-        .on("confirmation", (confirmationNumber, receipt) => {
-          // Add an alert to indicate that the transaction has been confirmed
-          alert("Transaction confirmed!");
-        });
+
+      setTransactionStatus("success");
     } catch (error) {
       console.error(error);
     }
@@ -76,6 +78,11 @@ const Confirm = () => {
           </div>
         </div>
       </div>
+      {transactionStatus === "success" && (
+        <div className={style.popupContainer}>
+          <div className={style.popup}>Transaction successful!</div>
+        </div>
+      )}
     </div>
   );
 };
