@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { UberContext } from "../context/uberContext";
 import { ethers } from "ethers";
 import okayed from '../assets/okay.png'
+import Image from 'next/image'
 
 const style = {
   wrapper: `flex-1 h-full flex flex-col justify-between`,
@@ -82,11 +83,11 @@ const Confirm = () => {
       {transactionStatus === "success" && (
         <div className={style.popupContainer}>
           <div className={style.popup} style={{ flexDirection: "column" }}>
-            <img
+            <Image
               src={okayed}
               alt="Transaction successful"
               className={style.successImage}
-              style={{ width: "200px" }}
+              height={60} width={60}
             />
             <h1 style={{fontWeight: "bold"}}>Awesome!</h1>
             <h4>Your order has been placed successfully</h4>
